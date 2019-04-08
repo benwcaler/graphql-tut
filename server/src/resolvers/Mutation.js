@@ -6,7 +6,6 @@ async function signup(parent, args, ctx, info) {
   const password = await bcrypt.hash(args.password, 10);
   const user = await ctx.prisma.createUser({ ...args, password });
   const token = jwt.sign({ userId: user.id }, APP_SECRET);
-
   return {
     token,
     user
@@ -34,23 +33,18 @@ async function login(parent, args, ctx, info) {
 
 function post(parent, args, ctx, info) {
   const userId = getUserId(ctx);
-  return ctx.prisma.createLink({
-    url: args.url,
-    description: args.description,
-    postedBy: { connect: { id: userId } }
-  });
-}
-
-function postMutation(parent, args, ctx, info) {
-  return ctx.prisma.createLink({
-    url: args.url,
-    description: args.description
-  });
+  return ctx.prisma.createLink(
+    {
+      url: args.url,
+      description: args.description,
+      postedBy: { connect: { id: userId } }
+    },
+    info
+  );
 }
 
 function removeUser(parent, args, ctx, info) {
   return ctx.prisma.deleteUser({ id: args.id });
-  // console.log(args);
 }
 
 async function vote(parent, args, ctx, info) {
@@ -73,6 +67,5 @@ module.exports = {
   login,
   post,
   removeUser,
-  vote,
-  postMutation
+  vote
 };

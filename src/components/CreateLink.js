@@ -4,7 +4,7 @@ import gql from "graphql-tag";
 
 const POST_MUTATION = gql`
   mutation PostMutation($description: String!, $url: String!) {
-    postMutation(description: $description, url: $url) {
+    post(description: $description, url: $url) {
       id
       url
       description
@@ -38,7 +38,11 @@ class CreateLink extends Component {
             placeholder="The URL for the link"
           />
         </div>
-        <Mutation mutation={POST_MUTATION} variables={{ description, url }}>
+        <Mutation
+          mutation={POST_MUTATION}
+          variables={{ description, url }}
+          onCompleted={() => this.props.history.push("/")}
+        >
           {postMutation => <button onClick={postMutation}>Submit</button>}
         </Mutation>
       </div>
